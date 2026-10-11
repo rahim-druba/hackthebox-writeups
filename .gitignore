@@ -1,0 +1,4 @@
+*.ovpn
+wordlists/
+*.pdf
+.DS_Store
