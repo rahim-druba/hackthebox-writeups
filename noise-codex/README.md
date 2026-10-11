@@ -11,6 +11,8 @@ Crypto, Easy. https://app.hackthebox.com/challenges/NoiseCodex
 
 ## Approach
 
+![challenge page](screenshots/03-challenge-page.png)
+
 Each bit `b` of the flag is encrypted as `c = p*q + 2*r + b`, where `p` is one
 1024-bit prime reused for every bit, `q` is random between `p` and `p^2`, and
 `r` is random between `2^256` and `2^512`. The noise `2*r + b` stays under
@@ -25,6 +27,8 @@ multiplier for the first ciphertext, which gives `p` directly.
 Once `p` is known, `(c mod p) & 1` gives each bit, and grouping them by 8
 recovers the flag.
 
+![installing python-flint, extracting the archive, reading source.py](screenshots/01-terminal-setup.png)
+
 ## Run
 
 ```
@@ -32,6 +36,5 @@ pip install python-flint
 python3 solve.py
 ```
 
-## Flag format
-
-`HTB{...}` (output of the script above).
+![running solve.py and getting the flag](screenshots/02-terminal-run.png)
+![challenge solved](screenshots/04-solved.png)
