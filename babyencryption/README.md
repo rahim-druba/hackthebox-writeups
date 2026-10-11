@@ -4,16 +4,17 @@ Crypto, Very Easy. https://app.hackthebox.com/challenges/BabyEncryption
 
 ## Files
 
-- `extracted/chall.py` — the challenge source
-- `extracted/msg.enc` — the ciphertext, as hex
-- `solve.py` — the solver
+- `extracted/chall.py` - the challenge source
+- `extracted/msg.enc` - the ciphertext, as hex
+- `solve.py` - my solver
+- `screenshots/` - VPN status, the terminal run, the challenge page, and the solved confirmation
 
 ## Approach
 
 Each byte `c` of the message is encrypted as `ct = (123 * c + 18) mod 256`.
-There is no secret key, only fixed numbers, so the formula can be reversed
-directly. Since 123 is odd, it has an inverse mod 256: `179`, because
-`123 * 179 mod 256 = 1`. Decryption is:
+There's no secret key here, just fixed numbers, so I reversed the formula
+directly. Since 123 is odd, it has an inverse mod 256: 179, because
+`123 * 179 mod 256 = 1`. That gives:
 
 ```
 c = 179 * (ct - 18) mod 256
@@ -27,3 +28,7 @@ result and checks it matches the original ciphertext.
 ```
 python3 solve.py
 ```
+
+## Flag format
+
+`HTB{...}` (output of the script above).
