@@ -7,7 +7,7 @@ Machine, Easy, Linux. https://app.hackthebox.com/machines/Orion
 - `nmap_initial.txt` - initial `nmap -sCV` scan
 - `gobuster_common.txt` - directory/file enumeration of the web app
 - `hash.txt` - the bcrypt hash recovered from the app's database (cracked with hashcat and rockyou)
-- `screenshots/` - VPN connection, the website, the exploit, the cracked credentials, both CVEs on NVD, and the flags being submitted
+- `screenshots/` - the whole run, from VPN connect to both flags submitted
 
 ## Approach
 
@@ -16,6 +16,8 @@ Machine, Easy, Linux. https://app.hackthebox.com/machines/Orion
 `nmap -sCV` found SSH (22) and HTTP (80, nginx). The HTTP service redirects
 to the vhost `orion.htb`, so I added it to `/etc/hosts`.
 
+![nmap recon](screenshots/03-nmap-recon.png)
+
 ### 2. Web enumeration
 
 The site is a telecom company landing page. I ran `gobuster` against
@@ -23,14 +25,26 @@ The site is a telecom company landing page. I ran `gobuster` against
 CMS 5.6.16 login page (the response headers also show `X-Powered-By:
 Craft CMS`).
 
+![website](screenshots/04-website.png)
+![gobuster run](screenshots/05-gobuster-full-run.png)
+![Craft CMS login showing version 5.6.16](screenshots/06-admin-login-craftcms-version.png)
+
 ### 3. Foothold - CVE-2025-32432
 
 Craft CMS versions up to 5.6.16 are vulnerable to an unauthenticated remote
 code execution bug in the `actions/assets/generate-transform` endpoint. The
 root cause is a Yii framework object-injection issue: a `__class` key in the
-request body gets deserialized unsafely. CVSS 10.0, critical. I used the
-Metasploit module `exploit/linux/http/craftcms_preauth_rce_cve_2025_32432`,
-which gave me a shell as `www-data`.
+request body gets deserialized unsafely. CVSS 10.0, critical.
+
+![CVE-2025-32432 on NVD](screenshots/07-cve-2025-32432-nvd.png)
+![Craft CMS's own advisory, GHSA-f3gw-9ww9-jmc3](screenshots/08-cve-2025-32432-ghsa-advisory.png)
+
+I used the Metasploit module
+`exploit/linux/http/craftcms_preauth_rce_cve_2025_32432`, which gave me a
+shell as `www-data`.
+
+![module options and the shell landing](screenshots/09-metasploit-module-options.png)
+![meterpreter session opened, shell as www-data](screenshots/10-metasploit-exploit-shell.png)
 
 ### 4. Credential exposure
 
@@ -59,6 +73,10 @@ USER="-f root" telnet -a 127.0.0.1
 ```
 
 That dropped me straight into a root shell.
+
+![CVE-2026-24061 on NVD](screenshots/11-cve-2026-24061-nvd.png)
+![both flags submitted](screenshots/12-flags-submitted.png)
+![machine solved](screenshots/13-solved.png)
 
 ## Key CVEs
 
